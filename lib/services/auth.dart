@@ -17,4 +17,15 @@ class AuthServices {
     }
     return token;
   }
+
+  Future<String> signin({required User user}) async {
+    late String token;
+    try {
+      Response response = await _dio.post('/signin', data: user.toJson());
+      token = response.data["token"];
+    } on DioError catch (error) {
+      print(error);
+    }
+    return token;
+  }
 }

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -14,22 +16,52 @@ class HomePage extends StatelessWidget {
         title: const Text("Pet Adopt"),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            ListTile(
-              title: const Text("Signin"),
-              trailing: const Icon(Icons.login),
-              onTap: () {},
-            ),
-            ListTile(
-              title: const Text("Signup"),
-              trailing: const Icon(Icons.how_to_reg),
-              onTap: () {
-                GoRouter.of(context).push('/signup');
-              },
-            )
-          ],
+        child: Consumer<AuthProvider>(
+          builder: (context, authProvider, child) => authProvider.isAuth
+              ? ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    DrawerHeader(
+                      child: Text("Welcome ${authProvider.user.username}"),
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text("Logout"),
+                      trailing: const Icon(Icons.logout),
+                      onTap: () {
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .logout();
+                      },
+                    ),
+                  ],
+                )
+              : ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    const DrawerHeader(
+                      child: Text("Sign in please"),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    ListTile(
+                      title: const Text("Signin"),
+                      trailing: const Icon(Icons.login),
+                      onTap: () {
+                        GoRouter.of(context).push('/signin');
+                      },
+                    ),
+                    ListTile(
+                      title: const Text("Signup"),
+                      trailing: const Icon(Icons.how_to_reg),
+                      onTap: () {
+                        GoRouter.of(context).push('/signup');
+                      },
+                    )
+                  ],
+                ),
         ),
       ),
       body: SingleChildScrollView(
